@@ -51,6 +51,30 @@
   ],
   "rooms": [
     {
+      "id": "ea84fcb0-40ae-46a6-acb2-8be226898a5b",
+      "name": "Leetcode Solving",
+      "topic": "Daily 5 problems",
+      "status": "waiting",
+      "daysLeft": 14,
+      "totalDays": 14,
+      "pot": 320,
+      "participants": 1,
+      "maxParticipants": 4,
+      "yourRank": 1,
+      "yourStreak": 1,
+      "checkedToday": true,
+      "color": "yellow",
+      "leaderboard": [
+        {
+          "name": "Alex Morgan",
+          "initials": "AM",
+          "score": 1,
+          "streak": 1,
+          "you": true
+        }
+      ]
+    },
+    {
       "id": "c839cdea-1932-4fb7-83b9-d0ea28a9eebe",
       "name": "The Early Birds",
       "topic": "Wake up at 4am daily",
@@ -137,6 +161,11 @@
     }
   ],
   "activity": [
+    {
+      "text": "You checked in to Leetcode Solving",
+      "time": "Just now",
+      "type": "check"
+    },
     {
       "text": "You checked in to Read 20 pages",
       "time": "Just now",
