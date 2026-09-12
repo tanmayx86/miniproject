@@ -12,6 +12,7 @@ function loadData() { return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); }
 function saveData(data) { fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2) + '\n'); }
 function send(res, status, body, type = 'application/json; charset=utf-8') { res.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store' }); res.end(type.startsWith('application/json') ? JSON.stringify(body) : body); }
 function parseBody(req) { return new Promise((resolve, reject) => { let raw = ''; req.on('data', chunk => raw += chunk); req.on('end', () => { try { resolve(raw ? JSON.parse(raw) : {}); } catch { reject(new Error('Invalid JSON')); } }); }); }
+function rankRoom(room) { room.leaderboard.sort((left, right) => right.score - left.score || right.streak - left.streak || left.name.localeCompare(right.name)); room.leaderboard.forEach((player, index) => { if (player.userId === room.ownerId || player.you && index === 0) room.yourRank = index + 1; }); return room; }
 function publicFile(req, res) {
   const requested = req.url === '/' ? '/index.html' : req.url.split('?')[0];
   const file = path.normalize(path.join(ROOT, requested));
@@ -23,7 +24,7 @@ const server = http.createServer(async (req, res) => {
   try {
     if (req.url.startsWith('/api/')) {
       const data = loadData();
-      if (req.method === 'GET' && req.url === '/api/state') return send(res, 200, data);
+      if (req.method === 'GET' && req.url === '/api/state') { data.rooms.forEach(rankRoom); return send(res, 200, data); }
       if (req.method === 'POST' && /^\/api\/rooms\/[^/]+\/join$/.test(req.url)) {
         const body = await parseBody(req);
         const roomId = req.url.split('/')[3];
@@ -39,7 +40,7 @@ const server = http.createServer(async (req, res) => {
           room.participants = room.leaderboard.length;
           saveData(data);
         }
-        return send(res, 200, room);
+        return send(res, 200, rankRoom(room));
       }
       if (req.method === 'POST' && req.url === '/api/check-in') {
         const body = await parseBody(req);
@@ -53,6 +54,7 @@ const server = http.createServer(async (req, res) => {
           item.yourRank = Math.max(1, item.yourRank - (item.yourRank > 1 ? 1 : 0));
           const player = item.leaderboard.find(entry => entry.userId === (body.user?.id || data.user.id)) || item.leaderboard.find(entry => entry.you);
           if (player) { player.score += 1; player.streak += 1; }
+          rankRoom(item);
         } else {
           item.streak += 1;
           item.totalCheckins += 1;
@@ -72,7 +74,7 @@ const server = http.createServer(async (req, res) => {
         const body = await parseBody(req);
         if (!body.name?.trim() || !body.topic?.trim()) return send(res, 400, { error: 'Room name and goal are required' });
         const owner = body.user || data.user;
-        const room = { id: crypto.randomUUID(), name: body.name.trim(), topic: body.topic.trim(), status: 'waiting', daysLeft: Number(body.days) || 14, totalDays: Number(body.days) || 14, pot: (Number(body.entryFee) || 0) * (Number(body.maxParticipants) || 8), participants: 1, maxParticipants: Number(body.maxParticipants) || 8, yourRank: 1, yourStreak: 0, checkedToday: false, color: 'yellow', leaderboard: [{ name: owner.name, initials: owner.initials, score: 0, streak: 0, you: true }] };
+        const room = { id: crypto.randomUUID(), ownerId: owner.id, name: body.name.trim(), topic: body.topic.trim(), status: 'waiting', daysLeft: Number(body.days) || 14, totalDays: Number(body.days) || 14, pot: (Number(body.entryFee) || 0) * (Number(body.maxParticipants) || 8), participants: 1, maxParticipants: Number(body.maxParticipants) || 8, yourRank: 1, yourStreak: 0, checkedToday: false, color: 'yellow', leaderboard: [{ userId: owner.id, name: owner.name, initials: owner.initials, score: 0, streak: 0, you: true }] };
         data.rooms.unshift(room); saveData(data); return send(res, 201, room);
       }
       return send(res, 404, { error: 'API route not found' });

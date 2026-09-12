@@ -99,15 +99,15 @@
       "participants": 1,
       "maxParticipants": 8,
       "yourRank": 1,
-      "yourStreak": 0,
-      "checkedToday": false,
+      "yourStreak": 1,
+      "checkedToday": true,
       "color": "yellow",
       "leaderboard": [
         {
           "name": "Rudra",
           "initials": "R",
-          "score": 0,
-          "streak": 0,
+          "score": 1,
+          "streak": 1,
           "you": true
         }
       ]
@@ -224,6 +224,11 @@
   ],
   "activity": [
     {
+      "text": "You checked in to New",
+      "time": "Just now",
+      "type": "check"
+    },
+    {
       "text": "You checked in to Journal",
       "time": "Just now",
       "type": "check"
@@ -247,11 +252,6 @@
       "text": "You checked in to The Focus Forge",
       "time": "Just now",
       "type": "check"
-    },
-    {
-      "text": "Maya took the lead in The Focus Forge",
-      "time": "12 min ago",
-      "type": "up"
     }
   ]
 }
