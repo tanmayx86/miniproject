@@ -2,15 +2,23 @@ const app = document.querySelector('#app');
 let state = null;
 let activeView = 'overview';
 const icons = { check: '✓', up: '↗', join: '+' };
-
+const identityKey = 'habit-arena-identity';
+function getIdentity() { try { return JSON.parse(localStorage.getItem(identityKey)) || null; } catch { return null; } }
+function createIdentity(name) { const cleanName = name.trim(); const id = globalThis.crypto?.randomUUID?.() || `user-${Date.now()}-${Math.random().toString(36).slice(2)}`; const identity = { id, name: cleanName, initials: cleanName.split(/\s+/).map(part => part[0]).join('').slice(0, 2).toUpperCase() }; localStorage.setItem(identityKey, JSON.stringify(identity)); return identity; }
+function applyIdentity(identity) { if (state) { state.user = { ...state.user, ...identity }; state.rooms.forEach(room => room.leaderboard?.forEach(player => { if (player.you) { player.name = identity.name; player.initials = identity.initials; } })); } const sidebarName = document.querySelector('#sidebar-name'); const topName = document.querySelector('#top-name'); if (sidebarName) sidebarName.textContent = identity.name; if (topName) topName.textContent = identity.name; document.querySelectorAll('.profile-mini .avatar, .user-chip .avatar').forEach(element => { element.textContent = identity.initials; }); }
+function inviteRoom() { return new URLSearchParams(window.location.search).get('room'); }
+function openIdentityModal() { document.querySelector('#modal-root').innerHTML = '<div class="modal-backdrop"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><h2>Choose your arena name</h2></div><form class="form" id="identity-form"><p style="margin:0;color:var(--muted);font-size:12px;line-height:1.5">Your name identifies you in rooms and invite links. It stays on this device until you change it.</p><label>Your unique name<input name="name" placeholder="e.g. Alex Morgan" autocomplete="nickname" minlength="2" maxlength="32" required autofocus></label><div class="form-actions"><button class="primary-btn">Enter arena →</button></div></form></div></div>'; }
 async function request(url, options) {
   try {
-    const response = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...options });
+    const requestOptions = { headers: { 'Content-Type': 'application/json' }, ...options };
+    if (url === '/api/rooms' && options?.body) requestOptions.body = JSON.stringify({ ...JSON.parse(options.body), user: getIdentity() });
+    const response = await fetch(url, requestOptions);
     const body = await response.json();
     if (!response.ok) throw new Error(body.error || 'Something went wrong');
+    if (url === '/api/state' && !options) { const identity = getIdentity(); if (identity) body.user = { ...body.user, ...identity }; }
     return body;
   } catch (error) {
-    if (url === '/api/state' && !options) return fetch('./data.json').then(response => response.json());
+    if (url === '/api/state' && !options) return fetch('./data.json').then(response => response.json()).then(body => { const identity = getIdentity(); if (identity) body.user = { ...body.user, ...identity }; return body; });
     throw error;
   }
 }
@@ -35,12 +43,13 @@ function renderRoom(room) { app.innerHTML = `<button class="link-btn" data-view=
 async function shareInvite(id) {
   const room = state.rooms.find(item => item.id === id);
   if (!room) return toast('Room not found.');
-  const inviteUrl = `${window.location.origin}/?room=${encodeURIComponent(room.id)}`;
+  const inviteUrl = new URL(window.location.href);
+  inviteUrl.search = `room=${encodeURIComponent(room.id)}`;
   try {
     if (navigator.share) {
-      await navigator.share({ title: `Join ${room.name}`, text: `Join my Habit Arena room: ${room.name}`, url: inviteUrl });
+      await navigator.share({ title: `Join ${room.name}`, text: `Join my Habit Arena room: ${room.name}`, url: inviteUrl.href });
     } else {
-      await navigator.clipboard.writeText(inviteUrl);
+      await navigator.clipboard.writeText(inviteUrl.href);
       toast('Invite link copied.');
     }
   } catch (error) {
@@ -52,6 +61,7 @@ function toast(message) { const element = document.querySelector('#toast'); elem
 async function checkIn(type, id) { try { const result = await request('/api/check-in', { method: 'POST', body: JSON.stringify({ type, id }) }); if (type === 'habit') Object.assign(state.habits.find(item => item.id === id), result.item); else Object.assign(state.rooms.find(item => item.id === id), result.item); state.activity = result.activity; toast('Logged. Your consistency just got louder.'); render(); } catch (error) { toast(error.message); } }
 
 document.addEventListener('click', event => { const action = event.target.closest('[data-action]')?.dataset.action; const view = event.target.closest('[data-view]')?.dataset.view; if (view) return setView(view); if (action === 'create-room') return openModal('room'); if (action === 'create-habit') return openModal('habit'); if (action === 'sign-in') return openModal('sign-in'); if (action === 'close-modal') return document.querySelector('#modal-root').innerHTML = ''; if (action === 'check-in') return checkIn(event.target.closest('[data-action]').dataset.type, event.target.closest('[data-action]').dataset.id); if (action === 'share-invite') return shareInvite(event.target.closest('[data-action]').dataset.id); if (action === 'open-room') { const room = state.rooms.find(item => item.id === event.target.closest('[data-action]').dataset.id); return renderRoom(room); } if (action === 'notifications') return toast('You are all caught up.'); if (action === 'settings') return toast('Settings are coming in the next round.'); });
+document.addEventListener('submit', event => { if (!event.target.matches('#identity-form')) return; event.preventDefault(); const identity = createIdentity(new FormData(event.target).get('name')); applyIdentity(identity); document.querySelector('#modal-root').innerHTML = ''; toast(`Welcome, ${identity.name}.`); const room = state.rooms.find(item => item.id === inviteRoom()); if (room) renderRoom(room); });
 document.addEventListener('submit', async event => { if (!event.target.matches('#room-form, #habit-form, #sign-in-form')) return; event.preventDefault(); if (event.target.id === 'sign-in-form') { document.querySelector('#modal-root').innerHTML = ''; toast('Signed in successfully.'); return; } const form = new FormData(event.target); const isRoom = event.target.id === 'room-form'; try { const item = await request(isRoom ? '/api/rooms' : '/api/habits', { method: 'POST', body: JSON.stringify(Object.fromEntries(form)) }); (isRoom ? state.rooms : state.habits).unshift(item); document.querySelector('#modal-root').innerHTML = ''; toast(`${isRoom ? 'Arena' : 'Habit'} created.`); render(); } catch (error) { toast(error.message); } });
-async function init() { try { state = await request('/api/state'); document.querySelector('#room-count').textContent = state.rooms.length; document.querySelector('#sidebar-points').textContent = state.user.points.toLocaleString(); render(); } catch (error) { app.innerHTML = `<div class="empty-state">Could not connect to the arena server. ${error.message}</div>`; } }
+async function init() { try { state = await request('/api/state'); const identity = getIdentity(); if (identity) applyIdentity(identity); document.querySelector('#room-count').textContent = state.rooms.length; document.querySelector('#sidebar-points').textContent = state.user.points.toLocaleString(); render(); const room = state.rooms.find(item => item.id === inviteRoom()); if (room && identity) renderRoom(room); if (!identity) openIdentityModal(); } catch (error) { app.innerHTML = `<div class="empty-state">Could not connect to the arena server. ${error.message}</div>`; } }
 init();

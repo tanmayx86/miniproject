@@ -54,7 +54,8 @@ const server = http.createServer(async (req, res) => {
       if (req.method === 'POST' && req.url === '/api/rooms') {
         const body = await parseBody(req);
         if (!body.name?.trim() || !body.topic?.trim()) return send(res, 400, { error: 'Room name and goal are required' });
-        const room = { id: crypto.randomUUID(), name: body.name.trim(), topic: body.topic.trim(), status: 'waiting', daysLeft: Number(body.days) || 14, totalDays: Number(body.days) || 14, pot: (Number(body.entryFee) || 0) * (Number(body.maxParticipants) || 8), participants: 1, maxParticipants: Number(body.maxParticipants) || 8, yourRank: 1, yourStreak: 0, checkedToday: false, color: 'yellow', leaderboard: [{ name: data.user.name, initials: data.user.initials, score: 0, streak: 0, you: true }] };
+        const owner = body.user || data.user;
+        const room = { id: crypto.randomUUID(), name: body.name.trim(), topic: body.topic.trim(), status: 'waiting', daysLeft: Number(body.days) || 14, totalDays: Number(body.days) || 14, pot: (Number(body.entryFee) || 0) * (Number(body.maxParticipants) || 8), participants: 1, maxParticipants: Number(body.maxParticipants) || 8, yourRank: 1, yourStreak: 0, checkedToday: false, color: 'yellow', leaderboard: [{ name: owner.name, initials: owner.initials, score: 0, streak: 0, you: true }] };
         data.rooms.unshift(room); saveData(data); return send(res, 201, room);
       }
       return send(res, 404, { error: 'API route not found' });
