@@ -1,0 +1,166 @@
+{
+  "user": {
+    "id": "you",
+    "name": "Alex Morgan",
+    "initials": "AM",
+    "points": 1240,
+    "level": 7,
+    "nextLevel": 1500,
+    "wins": 8,
+    "bestStreak": 34
+  },
+  "habits": [
+    {
+      "id": "solo-1",
+      "name": "Read 20 pages",
+      "frequency": "Daily",
+      "streak": 13,
+      "bestStreak": 18,
+      "totalCheckins": 48,
+      "color": "coral",
+      "checkedToday": true,
+      "history": [
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "solo-2",
+      "name": "Morning mobility",
+      "frequency": "5 days / week",
+      "streak": 6,
+      "bestStreak": 11,
+      "totalCheckins": 29,
+      "color": "lime",
+      "checkedToday": true,
+      "history": [
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "id": "c839cdea-1932-4fb7-83b9-d0ea28a9eebe",
+      "name": "The Early Birds",
+      "topic": "Wake up at 4am daily",
+      "status": "waiting",
+      "daysLeft": 14,
+      "totalDays": 14,
+      "pot": 400,
+      "participants": 1,
+      "maxParticipants": 5,
+      "yourRank": 1,
+      "yourStreak": 0,
+      "checkedToday": false,
+      "color": "yellow",
+      "leaderboard": [
+        {
+          "name": "Alex Morgan",
+          "initials": "AM",
+          "score": 0,
+          "streak": 0,
+          "you": true
+        }
+      ]
+    },
+    {
+      "id": "room-focus",
+      "name": "The Focus Forge",
+      "topic": "Deep work before noon",
+      "status": "live",
+      "daysLeft": 8,
+      "totalDays": 14,
+      "pot": 480,
+      "participants": 6,
+      "maxParticipants": 8,
+      "yourRank": 1,
+      "yourStreak": 10,
+      "checkedToday": true,
+      "color": "yellow",
+      "leaderboard": [
+        {
+          "name": "Maya Chen",
+          "initials": "MC",
+          "score": 11,
+          "streak": 11,
+          "you": false
+        },
+        {
+          "name": "Alex Morgan",
+          "initials": "AM",
+          "score": 10,
+          "streak": 10,
+          "you": true
+        },
+        {
+          "name": "Jordan Lee",
+          "initials": "JL",
+          "score": 8,
+          "streak": 4,
+          "you": false
+        },
+        {
+          "name": "Sam Rivera",
+          "initials": "SR",
+          "score": 7,
+          "streak": 7,
+          "you": false
+        }
+      ]
+    },
+    {
+      "id": "room-run",
+      "name": "No Zero Days",
+      "topic": "Move your body every day",
+      "status": "live",
+      "daysLeft": 21,
+      "totalDays": 30,
+      "pot": 720,
+      "participants": 10,
+      "maxParticipants": 12,
+      "yourRank": 4,
+      "yourStreak": 5,
+      "checkedToday": true,
+      "color": "blue",
+      "leaderboard": []
+    }
+  ],
+  "activity": [
+    {
+      "text": "You checked in to Read 20 pages",
+      "time": "Just now",
+      "type": "check"
+    },
+    {
+      "text": "You checked in to The Focus Forge",
+      "time": "Just now",
+      "type": "check"
+    },
+    {
+      "text": "Maya took the lead in The Focus Forge",
+      "time": "12 min ago",
+      "type": "up"
+    },
+    {
+      "text": "You checked in to No Zero Days",
+      "time": "1 hr ago",
+      "type": "check"
+    },
+    {
+      "text": "New challenger joined The Focus Forge",
+      "time": "3 hrs ago",
+      "type": "join"
+    }
+  ]
+}

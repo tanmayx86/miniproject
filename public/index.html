@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#161616">
+  <title>Habit Arena | Make consistency competitive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand"><span class="brand-mark">HA</span><span>HABIT<br><b>ARENA</b></span></div>
+      <div class="profile-mini"><div class="avatar avatar-coral">AM</div><div><strong>Alex Morgan</strong><span>Level 07 · <span id="sidebar-points">1,240</span> pts</span></div><span class="online-dot"></span></div>
+      <nav class="nav-links">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">◈</span>Overview</button>
+        <button class="nav-item" data-view="rooms"><span class="nav-icon">♜</span>My rooms <em id="room-count">2</em></button>
+        <button class="nav-item" data-view="habits"><span class="nav-icon">◒</span>Solo habits</button>
+      </nav>
+      <div class="sidebar-foot"><div class="mini-label">ARENA RANK</div><div class="rank-line"><span>#214</span><span class="rank-up">↑ 18 this week</span></div><div class="progress"><i style="width: 68%"></i></div><p>Keep checking in to climb.</p><button class="settings-btn" data-action="settings">⚙ Settings</button></div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><div class="mobile-brand"><span class="brand-mark">HA</span> HABIT ARENA</div><div class="top-actions"><button class="icon-btn" data-action="notifications" aria-label="Notifications">♧<span class="notification-dot"></span></button><button class="user-chip"><span class="avatar avatar-coral">AM</span><span>Alex</span><span>⌄</span></button></div></header>
+      <section id="app" class="content"></section>
+    </main>
+  </div>
+  <div id="modal-root"></div>
+  <div id="toast" role="status"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
