@@ -66,9 +66,52 @@
         false,
         false
       ]
+    },
+    {
+      "id": "bfefc383-a390-4d03-ae5a-def5be7bbc53",
+      "name": "Journal",
+      "frequency": "Daily",
+      "streak": 1,
+      "bestStreak": 0,
+      "totalCheckins": 1,
+      "color": "coral",
+      "checkedToday": true,
+      "history": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
     }
   ],
   "rooms": [
+    {
+      "id": "d9f224c7-7cf5-47e4-882e-ef86af854594",
+      "name": "New",
+      "topic": "No snooze",
+      "status": "waiting",
+      "daysLeft": 14,
+      "totalDays": 14,
+      "pot": 640,
+      "participants": 1,
+      "maxParticipants": 8,
+      "yourRank": 1,
+      "yourStreak": 0,
+      "checkedToday": false,
+      "color": "yellow",
+      "leaderboard": [
+        {
+          "name": "Rudra",
+          "initials": "R",
+          "score": 0,
+          "streak": 0,
+          "you": true
+        }
+      ]
+    },
     {
       "id": "ea84fcb0-40ae-46a6-acb2-8be226898a5b",
       "name": "Leetcode Solving",
@@ -181,6 +224,11 @@
   ],
   "activity": [
     {
+      "text": "You checked in to Journal",
+      "time": "Just now",
+      "type": "check"
+    },
+    {
       "text": "You checked in to Hey",
       "time": "Just now",
       "type": "check"
@@ -204,11 +252,6 @@
       "text": "Maya took the lead in The Focus Forge",
       "time": "12 min ago",
       "type": "up"
-    },
-    {
-      "text": "You checked in to No Zero Days",
-      "time": "1 hr ago",
-      "type": "check"
     }
   ]
 }
