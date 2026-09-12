@@ -47,6 +47,25 @@
         true,
         true
       ]
+    },
+    {
+      "id": "eb215ba1-2418-4f93-83c8-20470d9af34c",
+      "name": "Hey",
+      "frequency": "Daily",
+      "streak": 1,
+      "bestStreak": 0,
+      "totalCheckins": 1,
+      "color": "coral",
+      "checkedToday": true,
+      "history": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
     }
   ],
   "rooms": [
@@ -162,6 +181,11 @@
   ],
   "activity": [
     {
+      "text": "You checked in to Hey",
+      "time": "Just now",
+      "type": "check"
+    },
+    {
       "text": "You checked in to Leetcode Solving",
       "time": "Just now",
       "type": "check"
@@ -185,11 +209,6 @@
       "text": "You checked in to No Zero Days",
       "time": "1 hr ago",
       "type": "check"
-    },
-    {
-      "text": "New challenger joined The Focus Forge",
-      "time": "3 hrs ago",
-      "type": "join"
     }
   ]
 }

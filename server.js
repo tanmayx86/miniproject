@@ -24,6 +24,23 @@ const server = http.createServer(async (req, res) => {
     if (req.url.startsWith('/api/')) {
       const data = loadData();
       if (req.method === 'GET' && req.url === '/api/state') return send(res, 200, data);
+      if (req.method === 'POST' && /^\/api\/rooms\/[^/]+\/join$/.test(req.url)) {
+        const body = await parseBody(req);
+        const roomId = req.url.split('/')[3];
+        const room = data.rooms.find(entry => entry.id === roomId);
+        if (!room) return send(res, 404, { error: 'Room not found' });
+        const user = body.user || data.user;
+        room.leaderboard.forEach(player => { if (player.you && !player.userId) player.userId = data.user.id; });
+        let player = room.leaderboard.find(entry => entry.userId === user.id);
+        if (!player) {
+          if (room.leaderboard.length >= room.maxParticipants) return send(res, 409, { error: 'This room is full' });
+          player = { userId: user.id, name: user.name, initials: user.initials, score: 0, streak: 0, you: true };
+          room.leaderboard.push(player);
+          room.participants = room.leaderboard.length;
+          saveData(data);
+        }
+        return send(res, 200, room);
+      }
       if (req.method === 'POST' && req.url === '/api/check-in') {
         const body = await parseBody(req);
         const collection = body.type === 'habit' ? data.habits : data.rooms;
@@ -34,7 +51,7 @@ const server = http.createServer(async (req, res) => {
         if (body.type === 'room') {
           item.yourStreak += 1;
           item.yourRank = Math.max(1, item.yourRank - (item.yourRank > 1 ? 1 : 0));
-          const player = item.leaderboard.find(entry => entry.you);
+          const player = item.leaderboard.find(entry => entry.userId === (body.user?.id || data.user.id)) || item.leaderboard.find(entry => entry.you);
           if (player) { player.score += 1; player.streak += 1; }
         } else {
           item.streak += 1;
