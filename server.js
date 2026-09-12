@@ -14,8 +14,8 @@ function send(res, status, body, type = 'application/json; charset=utf-8') { res
 function parseBody(req) { return new Promise((resolve, reject) => { let raw = ''; req.on('data', chunk => raw += chunk); req.on('end', () => { try { resolve(raw ? JSON.parse(raw) : {}); } catch { reject(new Error('Invalid JSON')); } }); }); }
 function publicFile(req, res) {
   const requested = req.url === '/' ? '/index.html' : req.url.split('?')[0];
-  const file = path.normalize(path.join(ROOT, 'public', requested));
-  if (!file.startsWith(path.join(ROOT, 'public'))) return send(res, 403, { error: 'Forbidden' });
+  const file = path.normalize(path.join(ROOT, requested));
+  if (!file.startsWith(ROOT + path.sep)) return send(res, 403, { error: 'Forbidden' });
   fs.readFile(file, (error, content) => error ? send(res, 404, { error: 'Not found' }) : send(res, 200, content, MIME[path.extname(file)] || 'application/octet-stream'));
 }
 
