@@ -3,7 +3,17 @@ let state = null;
 let activeView = 'overview';
 const icons = { check: '✓', up: '↗', join: '+' };
 
-async function request(url, options) { const response = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...options }); const body = await response.json(); if (!response.ok) throw new Error(body.error || 'Something went wrong'); return body; }
+async function request(url, options) {
+  try {
+    const response = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...options });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || 'Something went wrong');
+    return body;
+  } catch (error) {
+    if (url === '/api/state' && !options) return fetch('./data.json').then(response => response.json());
+    throw error;
+  }
+}
 function money(value) { return `${value.toLocaleString()} pts`; }
 function setView(view) { activeView = view; document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === view)); render(); }
 function render() { if (!state) return; if (activeView === 'rooms') return renderRooms(); if (activeView === 'habits') return renderHabits(); renderOverview(); }
